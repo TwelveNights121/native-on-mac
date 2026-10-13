@@ -1,0 +1,48 @@
+name: "🎮 Pedir un juego"
+description: "Sugiere un juego para investigar y crear su receta."
+title: "[Pedido] "
+labels: ["pedido"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por la sugerencia. Antes de enviar, busca si el juego ya está pedido y vota con 👍.
+        **No incluyas enlaces de descarga ni repacks**: los pedidos con enlaces se cierran.
+  - type: input
+    id: juego
+    attributes:
+      label: Juego
+      placeholder: "Ej.: Need for Speed: Underground 2 (2004)"
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: ¿Qué versión tienes?
+      options: ["Steam", "GOG", "EA App / Origin", "Epic", "Disco original", "Otra"]
+    validations:
+      required: true
+  - type: input
+    id: mac
+    attributes:
+      label: Tu Mac y versión de macOS
+      placeholder: "Ej.: MacBook Air M1, macOS 27.2"
+    validations:
+      required: true
+  - type: textarea
+    id: probado
+    attributes:
+      label: ¿Qué has probado y qué pasó?
+      description: "Wine, Whisky, CrossOver, Game Porting Toolkit… y los errores que viste."
+  - type: input
+    id: recomp
+    attributes:
+      label: ¿Conoces algún port nativo o recompilación de este juego?
+      placeholder: "Enlace al proyecto (opcional)"
+  - type: checkboxes
+    id: reglas
+    attributes:
+      label: Confirmación
+      options:
+        - label: Tengo una copia legal de este juego y no incluí enlaces de descarga.
+          required: true

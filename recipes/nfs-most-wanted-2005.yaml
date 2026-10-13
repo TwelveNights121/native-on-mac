@@ -1,0 +1,77 @@
+# Receta: Need for Speed: Most Wanted (2005)
+# Probada: MacBook Air M1 (8 GB), macOS 27.2, 2026-10-12
+
+juego: "Need for Speed: Most Wanted (2005)"
+plataforma_original: windows-x86
+
+detectar:
+  ejecutable: speed.exe
+  versiones:
+    - nombre: "Black Edition 1.3 (inglés)"
+      tamano: 6029312
+      sha256: 80774c2e5d619b4f120b48d4462896fd504c263399d203a238769cffde1d253c
+      compatible_con: recompilado
+      nota: "Con el parche de 4 GB (Large Address Aware) también sirve: el setup lo deshace solo."
+
+caminos:
+  - tipo: recompilado
+    proyecto: https://github.com/elforeign/nfs-most-wanted-mac
+    basado_en: https://github.com/veritr1x/recomp-kit
+    requiere:
+      - apple-silicon
+      - macos: ">=27"
+      - command-line-tools: ">=27.0"
+      - espacio_gb: 15
+    tiempo: "10-25 min de compilación + ~35 min de shader warm-up en un M1"
+    script: scripts/nfs-most-wanted/instalar.sh
+
+  - tipo: traduccion
+    motor: game-porting-toolkit
+    nota: "Respaldo si tu speed.exe no es el compatible. Rendimiento menor."
+
+instalador:
+  # Para obtener la carpeta instalada desde una imagen de disco en Mac.
+  intentos_en_orden:
+    - motor: game-porting-toolkit    # Gcenx build 3.0-3 (Wine de CrossOver, 32 bits "32on64")
+      resultado: funciona
+    - motor: wine-staging-11.16
+      resultado: falla con instaladores Inno Setup + FreeArc cifrado
+    - motor: wine-devel-11.16
+      resultado: falla igual
+  nota: >
+    Wine 11 en macOS usa el modo WoW64 nuevo para programas de 32 bits; ciertos
+    instaladores de terceros (Inno Setup con descompresores agregados) se caen al arrancar.
+    El Game Porting Toolkit usa otro método de 32 bits y sí los abre.
+
+problemas_conocidos:
+  - sintoma: "err:seh:NtRaiseException Exception frame is not in stack limits"
+    donde: instalador (Wine 11)
+    arreglo: usar el Game Porting Toolkit para instalar
+
+  - sintoma: "tapi error: malformed file ... unknown architecture arm64e.x1-macos"
+    donde: compilación del descompilador de Ghidra
+    causa: Command Line Tools 26.x con el SDK de macOS 27
+    arreglo: actualizar a Command Line Tools 27.0 (Configuración > Actualización de software)
+    alternativa: SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
+
+  - sintoma: "App Update Required: Wine ... will not open in macOS 28"
+    donde: aviso de macOS
+    causa: Rosetta se recorta en macOS 28; Wine para Mac es de Intel
+    arreglo: ninguno necesario; Wine solo se usa para instalar. El juego nativo no usa Rosetta.
+
+  - sintoma: "La app no tiene ícono"
+    causa: el proyecto no distribuye arte de EA
+    arreglo: scripts/nfs-most-wanted/icono-y-modo-juego.sh (lo saca de tu speed.exe)
+
+  - sintoma: "No está el filtro dorado/naranja"
+    causa: el look 'Definitive' lo quita a propósito
+    arreglo: F10 > Gráficos > Avanzado > Golden colour filter = On, o scripts/nfs-most-wanted/look-xbox360.sh
+
+  - sintoma: "F10 no abre el menú"
+    causa: en MacBook, F10 es una tecla del sistema
+    arreglo: Fn+F10, botón del panel táctil del DualSense, o Back+Start
+
+rendimiento:
+  macbook_air_m1:
+    observado: "Fluido; caídas ocasionales a ~45 fps con el look Definitive"
+    recomendado: "Look Xbox 360 (más fiel y más liviano), anti-aliasing apagado, jugar con cargador"
